@@ -105,12 +105,7 @@ endblock %} {% block content %}
             type="button"
             data-calendar-day="{{ day.key }}"
             data-calendar-week="{{ day.week }}"
-            {%
-            if
-            day.past
-            %}disabled{%
-            endif
-            %}
+            {% if day.past %}disabled{% endif %}
           >
             <span>{{ day.day }}</span>
             <strong>{{ day.date }}</strong>

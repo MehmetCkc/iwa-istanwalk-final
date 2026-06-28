@@ -92,13 +92,7 @@
                 {% for category in categories %}
                 <option
                   value="{{ category }}"
-                  {%
-                  if
-                  category=""
-                  ="form_tour.category"
-                  %}selected{%
-                  endif
-                  %}
+                  {% if category == form_tour.category %}selected{% endif %}
                 >
                   {{ category }}
                 </option>
@@ -223,13 +217,7 @@
                     {% for language in languages %}
                     <option
                       value="{{ language }}"
-                      {%
-                      if
-                      language=""
-                      ="selected.language"
-                      %}selected{%
-                      endif
-                      %}
+                      {% if language == selected.language %}selected{% endif %}
                     >
                       {{ language }}
                     </option>
