@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Add Review — ISTANWALK{% endblock %}
+{% block content %}
+<section class="panel page-panel">
+  <header class="panel-head red">Add Review</header>
+  <div class="panel-body">
+    <form class="grid-form" method="post">
+      <div class="wide">
+        <label for="tour">Tour</label>
+        <input id="tour" type="text" value="{{ tour.name }}" readonly />
+      </div>
+      <div>
+        <label for="point">Review point</label>
+        <input
+          id="point"
+          name="point"
+          type="number"
+          min="1"
+          max="5"
+          step="0.1"
+          value="5"
+        />
+      </div>
+      <div class="wide">
+        <label for="review">Review</label>
+        <textarea id="review" name="review" required></textarea>
+      </div>
+      <button class="btn red" type="submit">Send review</button>
+      <a class="btn" href="{{ url_for('my_bookings') }}">Back</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

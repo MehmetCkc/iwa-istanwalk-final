@@ -1,0 +1,547 @@
+.profile-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  border-bottom: var(--bw) solid var(--line);
+  background: var(--paper2);
+  padding: 22px;
+}
+
+.avatar {
+  display: grid;
+  width: 118px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: var(--bw) solid var(--line);
+  background: var(--turq);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar span {
+  font-family: "Arial Black", sans-serif;
+  font-size: 38px;
+  text-transform: uppercase;
+}
+
+.profile-hero h1 {
+  font-size: clamp(30px, 5vw, 56px);
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-panel {
+  margin: 22px;
+}
+
+.spec-list {
+  border-top: 2px solid var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.spec-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 2px solid var(--ink);
+  padding: 10px 0;
+}
+
+.spec-list span {
+  text-align: right;
+}
+
+.upload-label {
+  display: block;
+  margin: 0 0 6px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.upload-card {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin: 0 0 6px;
+  border: var(--bw) solid var(--ink);
+  background: #fff;
+  cursor: pointer;
+  padding: 12px;
+}
+
+.upload-card:hover {
+  background: var(--turq);
+}
+
+.upload-avatar {
+  display: grid;
+  width: 92px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: var(--bw) solid var(--ink);
+  background: var(--paper2);
+  overflow: hidden;
+}
+
+.upload-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-avatar span {
+  font-family: "Arial Black", sans-serif;
+  font-size: 28px;
+  text-transform: uppercase;
+}
+
+.upload-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.upload-copy strong {
+  font-family: "Arial Black", sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.upload-copy small {
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile-tours {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin: 0 22px 24px;
+}
+
+.bookings-page {
+  grid-template-columns: 1fr;
+}
+
+.tour-section {
+  border: var(--bw) solid var(--line);
+  background: var(--paper2);
+}
+
+.tour-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: var(--bw) solid var(--line);
+  background: var(--turq);
+  padding: 14px 16px;
+}
+
+.tour-section-head.previous {
+  background: var(--navy);
+  color: #fff;
+}
+
+.tour-section-head.red-head {
+  background: var(--red);
+  color: #fff;
+}
+
+.tour-section-head h2 {
+  font-size: 22px;
+}
+
+.tour-section-head span {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.profile-tour-list {
+  display: grid;
+}
+
+.profile-more {
+  border-top: var(--bw) solid var(--line);
+}
+
+.profile-more > summary {
+  cursor: pointer;
+  background: var(--paper);
+  font-family: "Arial Black", sans-serif;
+  font-size: 13px;
+  padding: 12px 14px;
+  text-transform: uppercase;
+}
+
+.profile-more[open] > summary {
+  border-bottom: var(--bw) solid var(--line);
+  background: var(--turq);
+}
+
+.profile-tour-card {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  min-height: 236px;
+  border-bottom: var(--bw) solid var(--line);
+}
+
+.profile-tour-card[data-card-link] {
+  cursor: pointer;
+}
+
+.profile-tour-card[data-card-link]:hover {
+  background: #fff;
+}
+
+.profile-tour-card:last-child {
+  border-bottom: 0;
+}
+
+.profile-tour-card.past {
+  background: #f0eee8;
+}
+
+.profile-tour-image {
+  min-height: 236px;
+  border-right: var(--bw) solid var(--line);
+  background: var(--ink);
+  overflow: hidden;
+}
+
+.profile-tour-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-tour-body {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 8px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.tour-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+}
+
+.profile-tour-body h3 {
+  font-size: 19px;
+  line-height: 1.08;
+  align-self: start;
+  height: calc(2 * 1.08em);
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.profile-tour-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-self: end;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.booking-actions form {
+  margin: 0;
+}
+
+.participant-list {
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reservation-summary {
+  display: grid;
+  gap: 5px;
+}
+
+.reservation-summary details {
+  border: 2px solid var(--ink);
+  background: #fff;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.reservation-summary summary {
+  cursor: pointer;
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
+.reservation-summary p {
+  border-top: 1px solid var(--ink);
+  color: var(--muted);
+  padding: 6px 8px;
+}
+
+.booking-action {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--ink);
+  background: var(--paper2);
+  cursor: pointer;
+  font-family: "Arial Black", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+
+.booking-action:hover {
+  background: var(--ink);
+  color: var(--paper2);
+}
+
+.booking-action.danger {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+.booking-action.review {
+  background: var(--turq);
+}
+
+.booking-action.locked {
+  background: var(--ink);
+  color: var(--paper2);
+  cursor: not-allowed;
+}
+
+.modify-control {
+  min-width: 132px;
+  min-height: 34px;
+  justify-content: center;
+  padding: 9px 12px;
+  text-align: center;
+}
+
+.btn.modify-control {
+  font-size: 12px;
+  padding: 10px 14px;
+}
+
+.booking-action.modify-control {
+  font-size: 10.5px;
+  padding: 9px 12px;
+}
+
+.locked-modify {
+  background: #8ea5b9;
+  color: #25313d;
+  border-color: #25313d;
+  cursor: not-allowed;
+  filter: saturate(0.75);
+}
+
+.locked-modify:hover {
+  background: #8ea5b9;
+  color: #25313d;
+}
+
+.locked-tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-self: end;
+  width: 100%;
+}
+
+.locked-tour-actions .modify-control {
+  width: 100%;
+}
+
+.booked-mini {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  border: 2px solid var(--ink);
+  background: #d6e0ea;
+  color: var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 7px 9px;
+  text-transform: uppercase;
+}
+
+.full-count {
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.profile-tour-meta span,
+.profile-pill {
+  width: max-content;
+  border: 2px solid var(--ink);
+  background: var(--paper2);
+  font-family: "Courier New", monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 7px;
+  text-transform: uppercase;
+}
+
+.profile-pill.active {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+.profile-pill.past {
+  background: var(--ink);
+  color: var(--paper2);
+}
+
+.empty-state {
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  padding: 28px 16px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.guide-profile-reviews {
+  margin: 0 22px 24px;
+}
+
+.profile-review-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-review-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 170px;
+  border-right: var(--bw) solid var(--line);
+  border-bottom: var(--bw) solid var(--line);
+  background: #fff;
+  padding: 14px;
+}
+
+.profile-review-card:nth-child(3n) {
+  border-right: 0;
+}
+
+.profile-review-card h3 {
+  font-size: 17px;
+}
+
+.profile-review-card p {
+  color: var(--muted);
+}
+
+.profile-review-card small,
+.review-score {
+  width: max-content;
+  border: 2px solid var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 7px;
+  text-transform: uppercase;
+}
+
+.review-score {
+  background: var(--turq);
+}
+
+.profile-review-card small {
+  background: var(--paper2);
+}
+
+@media (max-width: 720px) {
+  .profile-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-actions {
+    align-items: stretch;
+  }
+
+  .upload-card {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-tours {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-tour-card {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .profile-review-list {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-review-card,
+  .profile-review-card:nth-child(3n) {
+    border-right: 0;
+  }
+
+  .profile-tour-image {
+    height: 150px;
+    border-right: 0;
+    border-bottom: var(--bw) solid var(--line);
+  }
+}

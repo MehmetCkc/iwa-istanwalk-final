@@ -1,0 +1,215 @@
+.who-page {
+  min-height: calc(100vh - 110px);
+  background:
+    linear-gradient(rgba(251, 250, 245, 0.9), rgba(251, 250, 245, 0.9)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(12, 12, 12, 0.04) 0 1px,
+      transparent 1px 8px
+    );
+  color: var(--ink);
+  padding: 28px;
+}
+
+.who-paper {
+  position: relative;
+  max-width: 1060px;
+  margin: 0 auto;
+  border: var(--bw) double var(--line);
+  background:
+    linear-gradient(rgba(251, 250, 245, 0.94), rgba(251, 250, 245, 0.94)),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 7px,
+      rgba(12, 12, 12, 0.035) 7px 8px
+    );
+  box-shadow: 10px 10px 0 var(--ink);
+  padding: 24px;
+}
+
+.who-paper::before,
+.who-paper::after {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: var(--ink);
+  content: "";
+}
+
+.who-paper::before {
+  left: 14px;
+}
+
+.who-paper::after {
+  right: 14px;
+}
+
+.who-header {
+  border-bottom: 6px double var(--ink);
+  padding: 0 18px 20px;
+  text-align: center;
+}
+
+.who-edition,
+.who-newsline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 8px 0;
+  text-transform: uppercase;
+}
+
+.who-header h1 {
+  display: grid;
+  justify-items: center;
+  margin: 24px auto 18px;
+  max-width: 760px;
+  font-family: "Marker Felt", Georgia, serif;
+  font-size: clamp(62px, 12vw, 164px);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+
+.who-header h1 span {
+  display: block;
+}
+
+.who-header h1 span:nth-child(1) {
+  justify-self: start;
+}
+
+.who-header h1 span:nth-child(2) {
+  justify-self: center;
+}
+
+.who-header h1 span:nth-child(3) {
+  justify-self: end;
+}
+
+.who-deck {
+  max-width: 780px;
+  margin: 0 auto;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(20px, 3vw, 34px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.who-newsline {
+  margin: 18px;
+}
+
+.who-copy {
+  column-count: 3;
+  column-gap: 28px;
+  column-rule: 2px solid var(--ink);
+  padding: 0 18px 12px;
+}
+
+.who-copy p {
+  break-inside: avoid;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.32;
+  margin-bottom: 16px;
+  text-align: justify;
+}
+
+.who-copy p:first-child::first-letter {
+  float: left;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Marker Felt", Georgia, serif;
+  font-size: 64px;
+  line-height: 0.84;
+  margin: 6px 10px 2px 0;
+  padding: 8px 10px;
+}
+
+.who-lede {
+  font-size: 20px;
+}
+
+.who-pullquote {
+  break-inside: avoid;
+  border-top: 5px solid var(--red);
+  border-bottom: 5px solid var(--red);
+  color: var(--red);
+  font-family: "Arial Black", Impact, sans-serif;
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 4px 0 16px;
+  padding: 12px 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .who-copy {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .who-page {
+    padding: 16px;
+  }
+
+  .who-paper {
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 16px;
+  }
+
+  .who-paper::before,
+  .who-paper::after {
+    display: none;
+  }
+
+  .who-header {
+    padding: 0 0 16px;
+  }
+
+  .who-edition,
+  .who-newsline {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .who-header h1 {
+    font-size: clamp(58px, 21vw, 104px);
+    max-width: 420px;
+  }
+
+  .who-newsline {
+    margin: 14px 0;
+  }
+
+  .who-copy {
+    column-count: 1;
+    padding: 0;
+  }
+
+  .who-copy p {
+    font-size: 17px;
+    text-align: left;
+  }
+
+  .who-pullquote {
+    font-size: 22px;
+  }
+}

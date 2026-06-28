@@ -1,0 +1,180 @@
+{% extends "base.html" %} {% block title %}ISTANWALK — Tours{% endblock %} {%
+block content %}
+<section class="hero">
+  <div class="hero-image">
+    <img
+      src="{{ url_for('static', filename='images/Ortakoy.jpeg') }}"
+      alt="Istanbul skyline illustration"
+    />
+  </div>
+  <div class="hero-copy">
+    <p class="mono kicker">Free walking tours / Istanbul</p>
+    <h1>Walk <span>Istanbul</span> like a local</h1>
+    <p class="hero-text">
+      Dense routes, sharp guides, old stones, street food, ferries, night lanes,
+      and the city between two continents.
+    </p>
+    <div class="hero-actions">
+      <a class="btn turq" href="#tours">Explore tours</a>
+      <a class="btn" href="{{ url_for('signup_user') }}">Create account</a>
+    </div>
+  </div>
+  <div class="hero-mark">
+    <img src="{{ url_for('static', filename='images/tulip.png') }}" alt="" />
+  </div>
+</section>
+
+<section class="sectionhead" id="tours">
+  <h2>Available Walks</h2>
+  <span class="tag">Filter by route mood</span>
+</section>
+
+<section class="filters" aria-label="Tour filters">
+  <div class="filter-tools">
+    <button class="chip" type="button" data-clear-filters>Clear filters</button>
+  </div>
+  <div class="filter-cell">
+    <span class="filter-label">Theme</span>
+    <div class="chips" data-filter-group data-filter-type="category">
+      <button class="chip on" type="button" data-filter="all">All</button>
+      {% for category in categories %}
+      <button class="chip" type="button" data-filter="{{ category|lower }}">
+        {{ category }}
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="filter-cell stat">
+    <span class="filter-label">Today</span>
+    <strong>{{ tours|list|length }}</strong>
+    <small>routes live</small>
+  </div>
+  <div class="filter-cell stat">
+    <span class="filter-label">Languages</span>
+    <div class="chips" data-filter-group data-filter-type="language">
+      <button class="chip on" type="button" data-filter="all">ALL</button>
+      <button class="chip" type="button" data-filter="english">EN</button>
+      <button class="chip" type="button" data-filter="italian">IT</button>
+      <button class="chip" type="button" data-filter="german">DE</button>
+      <button class="chip" type="button" data-filter="spanish">SPA</button>
+      <button class="chip" type="button" data-filter="portuguese">POR</button>
+    </div>
+  </div>
+  <div class="filter-cell duration-filter">
+    <span class="filter-label">Duration</span>
+    <div class="duration-fields">
+      <label>
+        <span>Min</span>
+        <input
+          type="number"
+          min="1"
+          step="1"
+          placeholder="Any"
+          data-duration-min
+        />
+      </label>
+      <label>
+        <span>Max</span>
+        <input
+          type="number"
+          min="1"
+          step="1"
+          placeholder="Any"
+          data-duration-max
+        />
+      </label>
+    </div>
+  </div>
+  <div class="filter-cell date-filter">
+    <div class="date-filter-head">
+      <span class="filter-label">Date</span>
+    </div>
+    <div
+      class="filter-month"
+      data-filter-month
+      data-initial-date="{{ today.isoformat() }}"
+    >
+      <div class="filter-month-head">
+        <button type="button" data-date-prev aria-label="Previous two weeks">
+          ‹
+        </button>
+        <strong data-date-range-label>Any date</strong>
+        <button type="button" data-date-next aria-label="Next two weeks">
+          ›
+        </button>
+      </div>
+      <div class="filter-weekdays" aria-hidden="true">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+      <div class="filter-month-grid" data-date-grid></div>
+      <div class="filter-month-foot">
+        <button type="button" data-date-clear>Clear date</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tours">
+  {% for tour in tours %}
+  <article
+    class="card"
+    data-tour-card
+    data-category="{{ tour.category|lower }}"
+    data-languages="{{ tour.languages|join(' ')|lower }}"
+    data-duration="{{ tour.duration_minutes or 120 }}"
+    data-dates="{% for departure in tour.departures %}{{ departure.date }} {% endfor %}"
+  >
+    <div class="card-languages" aria-label="Languages available">
+      {% for language in tour.languages %} {% set language_key = language|lower
+      %}
+      <span>
+        {% if language_key == 'english' %}EN{% elif language_key == 'italian'
+        %}IT{% elif language_key == 'portuguese' %}POR{% elif language_key ==
+        'spanish' %}SPA{% elif language_key == 'german' %}DE{% else %}{{
+        language[:3]|upper }}{% endif %}
+      </span>
+      {% else %}
+      <span>N/A</span>
+      {% endfor %}
+    </div>
+    <a class="card-media" href="{{ url_for('tour_details', tour_id=tour.id) }}">
+      <img
+        src="{{ url_for('static', filename=tour.card_image) }}"
+        alt="{{ tour.name }}"
+      />
+    </a>
+    <div class="card-body">
+      <div class="tour-card-topline">
+        <span class="tg t">{{ tour.category }}</span>
+        <span class="card-booked"
+          >{{ tour.booked_total }}/{{ tour.max_participants }} booked</span
+        >
+      </div>
+      <h3>{{ tour.name }}</h3>
+      <p>{{ tour.description|truncate(150, True, '...') }}</p>
+      <div class="meta">
+        <div class="meta-row">
+          <span class="tg d">{{ tour.next_date_label }}</span>
+          <span class="tg">{{ tour.duration_minutes or 120 }} min</span>
+        </div>
+        <div class="meta-row">
+          <span class="tg"
+            >{{ tour.guides|length }} {{ 'guide' if tour.guides|length == 1 else
+            'guides' }}</span
+          >
+        </div>
+      </div>
+      <a class="more" href="{{ url_for('tour_details', tour_id=tour.id) }}"
+        >View route</a
+      >
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% extends "base.html" %} {% block title %}{{ tour.name }} — ISTANWALK{%
+endblock %} {% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{{ url_for('home') }}">Tours</a>
+  <span>/</span>
+  <span>{{ tour.name }}</span>
+</nav>
+
+<article class="detail">
+  {% if booking_action.type == "modify" %}
+  <form
+    class="tour-cancel-corner"
+    method="post"
+    action="{{ url_for('cancel_tour', tour_id=tour.id) }}"
+    data-confirm="Are you sure you want to cancel this tour? This cannot be undone."
+  >
+    <button type="submit" aria-label="Cancel tour" title="Cancel tour">
+      ×
+    </button>
+  </form>
+  {% endif %}
+  <section class="gallery">
+    {% for image in gallery_images %}
+    <div class="gallery-item{% if loop.first %} gallery-big{% endif %}">
+      <img
+        src="{{ url_for('static', filename=image) }}"
+        alt="{{ tour.name }}"
+      />
+    </div>
+    {% endfor %}
+  </section>
+
+  <header class="detail-head">
+    <p class="mono kicker">{{ tour.category }}</p>
+    <h1>{{ tour.name }}</h1>
+    <p>{{ tour.description }}</p>
+  </header>
+
+  <div class="detail-body">
+    <section class="detail-main">
+      <h2>Route Stops</h2>
+      <div class="stops timeline-stops">
+        {% for stop in tour.stops %}
+        <article class="stop timeline-stop">
+          <div class="stop-node"></div>
+          <div class="stop-copy">
+            <span class="stop-badge">{{ loop.index }} stop</span>
+            <div class="stop-card">
+              <h3>{{ stop.name }}</h3>
+              <p>{{ stop.description }}</p>
+            </div>
+          </div>
+          <a
+            class="stop-image"
+            href="{{ url_for('static', filename=stop.image) }}"
+          >
+            <img
+              src="{{ url_for('static', filename=stop.image) }}"
+              alt="{{ stop.name }}"
+            />
+          </a>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <aside class="detail-side">
+      <div class="spec-list">
+        <div><b>Meeting</b><span>{{ tour.meeting_point }}</span></div>
+        <div><b>Category</b><span>{{ tour.category }}</span></div>
+        <div>
+          <b>Duration</b><span>{{ tour.duration_minutes or 120 }} min</span>
+        </div>
+        <div>
+          <b>Max participants</b><span>{{ tour.max_participants or 12 }}</span>
+        </div>
+        <div><b>Guides</b><span>{{ tour.guides|length }}</span></div>
+      </div>
+
+      <h2>Dates</h2>
+      <div class="calendar-shell" data-calendar-shell>
+        <div class="calendar-controls">
+          <button
+            class="calendar-arrow"
+            type="button"
+            data-calendar-prev
+            aria-label="Previous week"
+          >
+            ‹
+          </button>
+          <span data-calendar-label>Week 1</span>
+          <button
+            class="calendar-arrow"
+            type="button"
+            data-calendar-next
+            aria-label="Next week"
+          >
+            ›
+          </button>
+        </div>
+        <div class="tour-calendar" data-tour-calendar>
+          {% for day in calendar_days %}
+          <button
+            class="calendar-day{% if loop.first %} active{% endif %}{% if not day.times or day.past %} muted{% endif %}{% if day.past %} past{% endif %}{% if day.week != 0 %} hidden-week{% endif %}"
+            type="button"
+            data-calendar-day="{{ day.key }}"
+            data-calendar-week="{{ day.week }}"
+            {%
+            if
+            day.past
+            %}disabled{%
+            endif
+            %}
+          >
+            <span>{{ day.day }}</span>
+            <strong>{{ day.date }}</strong>
+            <em>{{ day.month }}</em>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="schedule-panels">
+        {% for day in calendar_days %}
+        <div
+          class="schedule-panel{% if loop.first %} active{% endif %}"
+          data-calendar-panel="{{ day.key }}"
+        >
+          {% if day.times %}
+          <span class="schedule-date"
+            >{{ day.day }} {{ day.date }} {{ day.month }}</span
+          >
+          <div class="schedule">
+            {% for time in day.times %} {% set slot_key = day.key ~ '|' ~ time
+            %}
+            <button
+              type="button"
+              data-booking-slot-date="{{ day.key }}"
+              data-booking-slot-time="{{ time }}"
+              data-booking-slot-limit="{{ booking_slots.get(slot_key, 0) }}"
+            >
+              <span>{{ time }}</span>
+              <em>{{ booking_slots.get(slot_key, 0) }} seats left</em>
+            </button>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="schedule-empty">No departures on this day.</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <h2>Guides</h2>
+      <div class="guide-list">
+        {% for guide in tour.guides %}
+        <a
+          class="guide-card"
+          href="{{ url_for('guide_info', guide_id=guide.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=guide.photo) }}"
+            alt="{{ guide.name }}"
+          />
+          <div>
+            <strong>{{ guide.name }} {{ guide.surname }}</strong>
+            <span>{{ guide.specialty }}</span>
+            <em>{{ guide.rating }} rating</em>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+      {% if booking_action.type == "admin_view" %}
+      <p class="admin-view-note">Admin view only</p>
+      {% elif booking_action.type == "modify" %}
+      <a
+        class="btn turq modify-control full"
+        href="{{ url_for('edit_tour', tour_id=tour.id) }}"
+        data-confirm="Are you sure you want to modify this tour?"
+        >Modify tour</a
+      >
+      {% if tour.reservation_people %}
+      <div class="detail-participant-roster">
+        <strong>Participants</strong>
+        {% for summary in tour.reservation_summary %} {% if summary.attendees %}
+        <section class="participant-group">
+          <h3>
+            {{ summary.time }} {{ summary.date.strftime("%d.%m") }} {{
+            summary.language }}
+          </h3>
+          <ul>
+            {% for name in summary.attendees %}
+            <li><span>{{ name }}</span></li>
+            {% endfor %}
+          </ul>
+        </section>
+        {% endif %} {% endfor %}
+      </div>
+      {% endif %} {% elif booking_action.type == "locked" %}
+      <span class="booked-mini full-count"
+        >{{ tour.booked_total }}/{{ tour.max_participants }} booked</span
+      >
+      <button
+        class="btn modify-control locked-modify full"
+        type="button"
+        disabled
+      >
+        Modify tour
+      </button>
+      {% if tour.reservation_people %}
+      <div class="detail-participant-roster">
+        <strong>Participants</strong>
+        {% for summary in tour.reservation_summary %} {% if summary.attendees %}
+        <section class="participant-group">
+          <h3>
+            {{ summary.time }} {{ summary.date.strftime("%d.%m") }} {{
+            summary.language }}
+          </h3>
+          <ul>
+            {% for name in summary.attendees %}
+            <li><span>{{ name }}</span></li>
+            {% endfor %}
+          </ul>
+        </section>
+        {% endif %} {% endfor %}
+      </div>
+      {% endif %} {% elif booking_action.type == "review" %}
+      <a
+        class="btn turq full"
+        href="{{ url_for('add_review', tour_id=tour.id) }}"
+        >Add review</a
+      >
+      {% elif booking_action.type == "reviewed" %}
+      <button class="btn full" type="button" disabled>Review submitted</button>
+      {% elif booking_action.type == "guide_view" %} {# Guides can view other
+      guides' tours, but cannot reserve or sign up as participants here. #} {%
+      elif current_user.is_authenticated and current_user.isCustomer() %} {% if
+      booking_error %}
+      <p class="booking-error">{{ booking_error }}</p>
+      {% endif %} {% if default_slot and default_people_limit > 0 %}
+      <form
+        class="tour-action-form booking-form"
+        method="post"
+        action="{{ url_for('book_tour', tour_id=tour.id) }}"
+        data-booking-form
+      >
+        <input type="hidden" name="date" value="" data-booking-date />
+        <input type="hidden" name="time" value="" data-booking-time />
+        <p class="booking-remaining" data-booking-remaining>
+          Select a date and time.
+        </p>
+        <label class="booking-count-label" for="people_count"
+          >Bring your friends</label
+        >
+        <small class="booking-party-help">You can bring up to 3 friends</small>
+        <select id="people_count" name="people_count" data-booking-count>
+          <option value="">Select time first</option>
+        </select>
+        <div class="participant-fields" data-participant-fields></div>
+        <button class="btn red full" type="submit" data-booking-submit disabled>
+          Reserve spot
+        </button>
+      </form>
+      {% if has_upcoming_booking %}
+      <form
+        class="tour-action-form"
+        method="post"
+        action="{{ url_for('cancel_booking', tour_id=tour.id) }}"
+        data-confirm="Are you sure you want to cancel this booking?"
+      >
+        <button class="btn turq full" type="submit">Cancel booking</button>
+      </form>
+      {% endif %} {% else %}
+      <button class="btn red full" type="button" disabled>
+        No places left
+      </button>
+      {% if has_upcoming_booking %}
+      <form
+        class="tour-action-form"
+        method="post"
+        action="{{ url_for('cancel_booking', tour_id=tour.id) }}"
+        data-confirm="Are you sure you want to cancel this booking?"
+      >
+        <button class="btn turq full" type="submit">Cancel booking</button>
+      </form>
+      {% endif %} {% endif %} {% else %}
+      <div class="member-prompt">
+        <strong>You are not a member?</strong>
+        <a class="btn red full" href="{{ url_for('signup_user') }}"
+          >Sign up to reserve</a
+        >
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</article>
+{% endblock %}

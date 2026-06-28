@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block title %}Login — ISTANWALK{% endblock %} {%
+block content %}
+<section class="auth-shell">
+  <div class="auth-art login">
+    <img
+      src="{{ url_for('static', filename='images/galata1.jpeg') }}"
+      alt="Istanbul illustration"
+    />
+  </div>
+  <form class="panel auth-panel" method="post">
+    <header class="panel-head">Login</header>
+    <div class="panel-body">
+      {% if error %}
+      <div class="alert bad">{{ error }}</div>
+      {% endif %}
+      <label for="email">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+
+      <button class="btn turq full" type="submit">Enter</button>
+      <p class="auth-note">
+        No account?
+        <a href="{{ url_for('signup_user') }}">Join as participant</a>.
+      </p>
+    </div>
+  </form>
+</section>
+{% endblock %}

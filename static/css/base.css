@@ -1,0 +1,119 @@
+:root {
+  --turq: #16e0d0;
+  --red: #ff1f1f;
+  --navy: #0a1fb0;
+  --yellow: #f5e04f;
+  --ink: #0c0c0c;
+  --paper: #f3efe6;
+  --paper2: #fbfaf5;
+  --muted: #62605b;
+  --bw: 3px;
+  --line: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  min-height: 100%;
+  background:
+    linear-gradient(rgba(243, 239, 230, 0.88), rgba(243, 239, 230, 0.88)),
+    url("../images/marble-bg.jpg") center / cover fixed;
+  /* Firefox uses these properties; Chromium/Safari use the rules below. */
+  scrollbar-color: var(--turq) var(--ink);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  border-left: 2px solid var(--ink);
+  background: var(--paper2);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--ink);
+  background: var(--turq);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--red);
+}
+
+body {
+  min-height: 100%;
+  color: var(--ink);
+  background: transparent;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+.head {
+  font-family: "Arial Black", "Helvetica Neue", Impact, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.94;
+  text-transform: uppercase;
+}
+
+.mono,
+.kicker,
+.tag {
+  font-family: "Courier New", ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  color: var(--red);
+  font-size: 12px;
+}
+
+.flash-stack {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.flash-message {
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 10px 12px;
+  text-transform: uppercase;
+}
+
+.flash-message.error {
+  border-color: var(--red);
+  color: var(--red);
+}

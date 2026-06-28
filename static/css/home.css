@@ -1,0 +1,475 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1.3fr 0.65fr;
+  border-bottom: var(--bw) solid var(--line);
+}
+
+.hero-image,
+.hero-mark {
+  min-height: 240px;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero-image {
+  border-right: var(--bw) solid var(--line);
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px 24px;
+}
+
+.hero-copy h1 {
+  max-width: 720px;
+  font-size: clamp(38px, 6vw, 76px);
+}
+
+.hero-copy h1 span {
+  display: inline-block;
+  background: var(--turq);
+  padding: 0 8px;
+}
+
+.hero-text {
+  max-width: 620px;
+  margin-top: 14px;
+  font-family: "Arial Black", sans-serif;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.hero-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: var(--bw) solid var(--line);
+  background: var(--turq);
+}
+
+.hero-mark img {
+  width: 72%;
+}
+
+.filters {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 0.5fr 0.85fr 0.75fr 1.15fr;
+  border: var(--bw) solid var(--line);
+  background: var(--paper2);
+  margin: 22px;
+}
+
+.filter-tools {
+  position: absolute;
+  top: -42px;
+  right: -3px;
+}
+
+.date-filter {
+  display: grid;
+  position: relative;
+  gap: 8px;
+  align-content: start;
+  border-right: 0;
+}
+
+.date-filter-head {
+  display: flex;
+  align-items: center;
+}
+
+.date-filter-head .filter-label {
+  margin-bottom: 0;
+}
+
+.filter-month {
+  display: block;
+  width: 100%;
+  border: 2px solid var(--ink);
+  background: #fff;
+}
+
+.filter-month-head {
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+  align-items: center;
+  border-bottom: 2px solid var(--ink);
+}
+
+.filter-month-head button {
+  min-height: 26px;
+  border: 0;
+  background: var(--paper2);
+  cursor: pointer;
+  font-family: "Arial Black", sans-serif;
+  font-size: 18px;
+}
+
+.filter-month-head strong {
+  border-left: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  font-family: "Arial Black", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.filter-weekdays,
+.filter-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.filter-weekdays span {
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 5px 0 3px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.month-day {
+  display: grid;
+  min-height: 24px;
+  place-items: center;
+  border: 0;
+  background: #fff;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.month-day:hover,
+.month-day.selected {
+  background: #eef0f2;
+}
+
+.month-day.range-edge {
+  background: var(--red);
+  color: #fff;
+}
+
+.month-day.muted {
+  color: #c4c4c4;
+}
+
+.filter-month-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 2px solid var(--ink);
+  background: var(--paper2);
+  padding: 6px 8px;
+}
+
+.filter-month-foot button {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.filter-month-foot button {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.duration-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.duration-fields label {
+  display: grid;
+  gap: 6px;
+}
+
+.duration-fields span {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.duration-fields input {
+  width: 100%;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font-family: "Arial Black", sans-serif;
+  font-size: 18px;
+  padding: 9px 10px;
+  text-transform: uppercase;
+}
+
+.filter-cell {
+  border-right: var(--bw) solid var(--line);
+  padding: 14px 16px;
+}
+
+.filter-cell:last-child {
+  border-right: 0;
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip,
+.tg {
+  border: 2px solid var(--ink);
+  background: var(--paper2);
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
+  text-transform: uppercase;
+}
+
+.chip.on {
+  background: var(--ink);
+  color: var(--paper2);
+}
+
+.stat strong {
+  display: block;
+  font-family: "Arial Black", sans-serif;
+  font-size: 23px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.stat small {
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.tours {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 2px;
+  border-top: var(--bw) solid var(--line);
+  border-left: var(--bw) solid var(--line);
+  background: transparent;
+  margin: 0 22px 24px;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 145px 1fr;
+  min-width: 0;
+  min-height: 470px;
+  border: var(--bw) solid var(--line);
+  background: var(--paper2);
+  overflow: hidden;
+}
+
+.card:hover {
+  background: #fff;
+}
+
+.card-languages {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: calc(100% - 16px);
+}
+
+.card-languages span {
+  border: 2px solid var(--ink);
+  background: var(--turq);
+  color: var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 4px 6px;
+  text-transform: uppercase;
+}
+
+.card-media {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 145px;
+  border-bottom: var(--bw) solid var(--line);
+  background: var(--ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+.card-booked {
+  width: max-content;
+  min-width: 104px;
+  border: 2px solid var(--ink);
+  background: #d6e0ea;
+  color: var(--ink);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  padding: 6px 9px;
+  text-transform: uppercase;
+}
+
+.card-body {
+  display: grid;
+  grid-template-rows: auto 58px 92px auto auto;
+  gap: 10px;
+  padding: 14px 14px 16px;
+}
+
+.card-body h3 {
+  font-size: 22px;
+  line-height: 1.08;
+  align-self: start;
+  height: calc(2 * 1.08em);
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.card-body p {
+  color: #2f2d2a;
+  height: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.meta {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.tg.t {
+  width: max-content;
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+.tg.d {
+  background: var(--turq);
+}
+
+.more {
+  align-self: end;
+  color: var(--red);
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card.hidden {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  .tours {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image,
+  .hero-mark {
+    min-height: 170px;
+    border: 0;
+    border-bottom: var(--bw) solid var(--line);
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .tours {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-cell {
+    border-right: 0;
+    border-bottom: var(--bw) solid var(--line);
+  }
+}

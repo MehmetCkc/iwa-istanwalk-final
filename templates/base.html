@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}ISTANWALK{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/profile.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/tour.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/guide.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/who.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
+    {% block styles %}{% endblock %}
+  </head>
+  <body>
+    {% include "_navbar.html" %}
+
+    <div class="layout">
+      <aside class="side">
+        <a class="navblock b1" href="{{ url_for('home') }}"
+          ><span>01</span>Tours</a
+        >
+        <a class="navblock b2" href="{{ url_for('who_we_are') }}"
+          ><span>02</span>Who We Are</a
+        >
+        {% if current_user.is_authenticated %} {% if current_user.isAdmin() %}
+        <a class="navblock b3" href="{{ url_for('admin_dashboard') }}"
+          ><span>03</span>Dashboard</a
+        >
+        {% elif current_user.isGuide() %}
+        <a class="navblock b3" href="{{ url_for('guide_tours') }}"
+          ><span>03</span>My Tours</a
+        >
+        <a class="navblock b4" href="{{ url_for('add_tour') }}"
+          ><span>04</span>Create Tour</a
+        >
+        {% else %}
+        <a class="navblock b3" href="{{ url_for('my_bookings') }}"
+          ><span>03</span>My Bookings</a
+        >
+        {% endif %} {% if not current_user.isAdmin() %}<a
+          class="navblock b4{% if current_user.isGuide() %} guide-profile-nav{% endif %}"
+          href="{{ url_for('profile') }}"
+          ><span>{% if current_user.isGuide() %}05{% else %}04{% endif %}</span
+          >Profile</a
+        >{% endif %} {% else %}
+        <a class="navblock b3" href="{{ url_for('signup_guide') }}"
+          ><span>03</span>Become A Guide</a
+        >
+        {% endif %}
+        <div
+          class="side-art"
+          data-tulip-stack
+          data-tulip-src="{{ url_for('static', filename='images/tulip.png') }}"
+        ></div>
+      </aside>
+
+      <main class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+          <p class="flash-message {{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %} {% block content %}{% endblock %}
+        <footer class="footer">
+          <span>ISTANWALK / FREE WALKING TOURS</span>
+        </footer>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tour_filters.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar_booking.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tour_editor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,4 @@
+{% extends "base.html" %} {% block title %}Create Tour — ISTANWALK{% endblock %}
+{% block content %} {% set form_title = "Create Tour" %} {% set form_action =
+url_for('add_tour') %} {% set submit_label = "Create tour" %} {% include
+"_tour_form.html" %} {% endblock %}

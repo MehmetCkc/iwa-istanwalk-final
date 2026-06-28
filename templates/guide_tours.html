@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% block title %}My Tours — ISTANWALK{% endblock %} {%
+block content %} {% if pending_completions %}
+<section class="completion-pop">
+  <div class="completion-strip" aria-label="Pending tour reports">
+    {% for pending_completion in pending_completions %}
+    <form
+      class="completion-card"
+      method="post"
+      action="{{ url_for('complete_tour', tour_id=pending_completion.tour.id) }}"
+      enctype="multipart/form-data"
+    >
+      <input type="hidden" name="date" value="{{ pending_completion.date }}" />
+      <input type="hidden" name="time" value="{{ pending_completion.time }}" />
+      <p class="mono kicker">Tour completed</p>
+      <h2>{{ pending_completion.tour.name }}</h2>
+      <p>
+        {{ pending_completion.time }} / {{ pending_completion.date }} / {{
+        pending_completion.language }} / {{ pending_completion.expected }}
+        expected
+      </p>
+      <label for="attendance_{{ loop.index }}">Attendance</label>
+      <input
+        id="attendance_{{ loop.index }}"
+        name="attendance"
+        type="number"
+        min="0"
+        max="{{ pending_completion.tour.max_participants }}"
+        required
+      />
+      <label for="proof_image_{{ loop.index }}">Proof photo</label>
+      <input
+        id="proof_image_{{ loop.index }}"
+        name="proof_image"
+        type="file"
+        accept="image/*"
+        required
+      />
+      <button class="btn red" type="submit">Save tour report</button>
+    </form>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="sectionhead">
+  <h2>My Tours</h2>
+  <span class="tag">Guide console</span>
+</section>
+
+<section class="guide-manage-grid">
+  {% for tour in tours %}
+  <article class="manage-card">
+    {% if not tour.has_reservations %}
+    <form
+      class="tour-cancel-corner"
+      method="post"
+      action="{{ url_for('cancel_tour', tour_id=tour.id) }}"
+      data-confirm="Are you sure you want to cancel this tour? This cannot be undone."
+    >
+      <button
+        type="submit"
+        aria-label="Cancel {{ tour.name }}"
+        title="Cancel tour"
+      >
+        ×
+      </button>
+    </form>
+    {% endif %}
+    <a
+      class="manage-image"
+      href="{% if tour.has_reservations %}{{ url_for('tour_details', tour_id=tour.id) }}{% else %}{{ url_for('edit_tour', tour_id=tour.id) }}{% endif %}"
+    >
+      <img
+        src="{{ url_for('static', filename=tour.card_image) }}"
+        alt="{{ tour.name }}"
+      />
+    </a>
+    <div class="manage-body">
+      <div class="tour-card-topline">
+        <span class="profile-pill active">{{ tour.category }}</span>
+        <span class="booked-mini"
+          >{{ tour.booked_total }}/{{ tour.max_participants }} booked</span
+        >
+      </div>
+      <h3>{{ tour.name }}</h3>
+      <p>{{ tour.description|truncate(150, True, '...') }}</p>
+      {% if tour.has_reservations %}
+      <div class="locked-tour-actions">
+        <span class="btn modify-control locked-modify">Modify tour</span>
+      </div>
+      {% else %}
+      <a
+        class="btn turq modify-control"
+        href="{{ url_for('edit_tour', tour_id=tour.id) }}"
+        data-confirm="Are you sure you want to modify this tour?"
+        >Modify tour</a
+      >
+      {% endif %}
+    </div>
+  </article>
+  {% else %}
+  <p class="empty-state">No tours assigned yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

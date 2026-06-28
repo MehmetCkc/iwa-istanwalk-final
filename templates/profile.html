@@ -1,0 +1,567 @@
+{% extends "base.html" %} {% block title %}Profile — ISTANWALK{% endblock %} {%
+block content %}
+<section class="profile-hero">
+  <div class="avatar">
+    {% if current_user.profile_picture %}
+    <img
+      src="{{ current_user.profile_picture }}"
+      alt="{{ current_user.getFullName() }}"
+    />
+    {% else %}
+    <span>{{ current_user.name[0] }}{{ current_user.surname[0] }}</span>
+    {% endif %}
+  </div>
+  <div>
+    <p class="mono kicker">{{ current_user.user_type }}</p>
+    <h1>{{ current_user.getFullName() }}</h1>
+    <p>{{ current_user.email }}</p>
+  </div>
+  <div class="profile-actions">
+    <a class="btn turq" href="{{ url_for('profile', edit=1) }}">Edit</a>
+    <a class="btn" href="{{ url_for('profile', password=1) }}">Password</a>
+  </div>
+</section>
+
+<section class="panel profile-panel">
+  <header class="panel-head">Account Details</header>
+  <div class="panel-body">
+    {% if error %}
+    <div class="alert bad">{{ error }}</div>
+    {% endif %} {% if edit_mode or password_mode %}
+    <form method="post" class="grid-form" enctype="multipart/form-data">
+      <input
+        type="hidden"
+        name="password_mode"
+        value="{{ 1 if password_mode else 0 }}"
+      />
+      {% if edit_mode %}
+      <div class="wide">
+        <span class="upload-label">Profile picture</span>
+        <label class="upload-card" for="profile_picture">
+          <span class="upload-avatar" data-upload-preview>
+            {% if current_user.profile_picture %}
+            <img
+              src="{{ current_user.profile_picture }}"
+              alt="{{ current_user.getFullName() }}"
+            />
+            {% else %}
+            <span>{{ current_user.name[0] }}{{ current_user.surname[0] }}</span>
+            {% endif %}
+          </span>
+          <span class="upload-copy">
+            <strong>Click to upload image</strong>
+            <small data-upload-name
+              >JPG, PNG, or WEBP. Cropped square automatically.</small
+            >
+          </span>
+        </label>
+        <input
+          class="file-input"
+          id="profile_picture"
+          name="profile_picture"
+          type="file"
+          accept="image/*"
+          data-upload-input
+        />
+      </div>
+      {% endif %}
+      <div>
+        <label for="name">First name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          value="{{ current_user.name }}"
+          required
+        />
+      </div>
+      <div>
+        <label for="surname">Last name</label>
+        <input
+          id="surname"
+          name="surname"
+          type="text"
+          value="{{ current_user.surname }}"
+          required
+        />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value="{{ current_user.email }}"
+          required
+        />
+      </div>
+      <div class="wide">
+        <label for="location">Location</label>
+        <input
+          id="location"
+          name="location"
+          type="text"
+          value="{{ current_user.location or '' }}"
+        />
+      </div>
+      {% if password_mode %}
+      <div>
+        <label for="old_password">Old password</label>
+        <input id="old_password" name="old_password" type="password" />
+      </div>
+      <div>
+        <label for="new_password">New password</label>
+        <input id="new_password" name="new_password" type="password" />
+      </div>
+      <div class="wide">
+        <label for="confirm_password">Confirm password</label>
+        <input id="confirm_password" name="confirm_password" type="password" />
+      </div>
+      {% endif %}
+
+      <button class="btn turq" type="submit">Save changes</button>
+      <a class="btn" href="{{ url_for('profile') }}">Cancel</a>
+    </form>
+    {% else %}
+    <div class="spec-list">
+      <div><b>Name</b><span>{{ current_user.getFullName() }}</span></div>
+      <div><b>Email</b><span>{{ current_user.email }}</span></div>
+      <div>
+        <b>Location</b><span>{{ current_user.location or 'Not set' }}</span>
+      </div>
+      {% if current_user.isGuide() %}
+      <div>
+        <b>Spoken languages</b
+        ><span
+          >{{ guide_languages|join(" / ") if guide_languages else 'Not set'
+          }}</span
+        >
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if current_user.isGuide() %}
+<section class="profile-tours">
+  <article class="tour-section">
+    <header class="tour-section-head">
+      <h2>My Tours</h2>
+      <span>{{ guide_current_tours|length }} active</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in guide_current_tours[:3] %}
+      <article
+        class="profile-tour-card"
+        data-card-link="{% if item.tour.has_reservations %}{{ url_for('tour_details', tour_id=item.tour.id) }}{% else %}{{ url_for('edit_tour', tour_id=item.tour.id) }}{% endif %}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{% if item.tour.has_reservations %}{{ url_for('tour_details', tour_id=item.tour.id) }}{% else %}{{ url_for('edit_tour', tour_id=item.tour.id) }}{% endif %}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <div class="tour-card-topline">
+            <span class="profile-pill active">{{ item.status }}</span>
+            <span class="booked-mini"
+              >{{ item.tour.booked_total }}/{{ item.tour.max_participants }}
+              booked</span
+            >
+          </div>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+          </div>
+          <div class="reservation-summary">
+            {% for summary in item.reservation_summary[:2] %}
+            <details>
+              <summary>
+                {{ summary.date.strftime("%d.%m.%Y") }} / {{ summary.time }} /
+                {{ summary.language }} / {{ summary.expected }} expected
+              </summary>
+              {% for reservation in summary.reservations %}
+              <p>
+                {{ reservation.name }} ({{ reservation.people_count }}){% if
+                reservation.participants %}: {{ reservation.participants|join(",
+                ") }}{% endif %}
+              </p>
+              {% else %}
+              <p>No reservations yet.</p>
+              {% endfor %}
+            </details>
+            {% endfor %}
+          </div>
+          <div class="booking-actions">
+            {% if item.tour.has_reservations %}
+            <span class="booking-action modify-control locked-modify"
+              >Modify tour</span
+            >
+            {% else %}
+            <a
+              class="booking-action review modify-control"
+              href="{{ url_for('edit_tour', tour_id=item.tour.id) }}"
+              data-confirm="Are you sure you want to modify this tour?"
+              >Modify tour</a
+            >
+            {% endif %}
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >View route</a
+            >
+          </div>
+        </div>
+      </article>
+      {% endfor %} {% if guide_current_tours|length == 0 %}
+      <p class="empty-state">No active tours yet.</p>
+      {% endif %} {% if guide_current_tours|length > 3 %}
+      <details class="profile-more">
+        <summary>
+          ↓ {{ guide_current_tours|length - 3 }} more active tours
+        </summary>
+        <div class="profile-tour-list">
+          {% for item in guide_current_tours[3:] %}
+          <article
+            class="profile-tour-card"
+            data-card-link="{% if item.tour.has_reservations %}{{ url_for('tour_details', tour_id=item.tour.id) }}{% else %}{{ url_for('edit_tour', tour_id=item.tour.id) }}{% endif %}"
+          >
+            <a
+              class="profile-tour-image"
+              href="{% if item.tour.has_reservations %}{{ url_for('tour_details', tour_id=item.tour.id) }}{% else %}{{ url_for('edit_tour', tour_id=item.tour.id) }}{% endif %}"
+            >
+              <img
+                src="{{ url_for('static', filename=item.tour.card_image) }}"
+                alt="{{ item.tour.name }}"
+              />
+            </a>
+            <div class="profile-tour-body">
+              <div class="tour-card-topline">
+                <span class="profile-pill active">{{ item.status }}</span>
+                <span class="booked-mini"
+                  >{{ item.tour.booked_total }}/{{ item.tour.max_participants }}
+                  booked</span
+                >
+              </div>
+              <h3>{{ item.tour.name }}</h3>
+              <div class="profile-tour-meta">
+                <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+                <span>{{ item.time }}</span>
+                <span>{{ item.tour.category }}</span>
+              </div>
+              <div class="reservation-summary">
+                {% for summary in item.reservation_summary[:2] %}
+                <details>
+                  <summary>
+                    {{ summary.date.strftime("%d.%m.%Y") }} / {{ summary.time }}
+                    / {{ summary.language }} / {{ summary.expected }} expected
+                  </summary>
+                  {% for reservation in summary.reservations %}
+                  <p>
+                    {{ reservation.name }} ({{ reservation.people_count }}){% if
+                    reservation.participants %}: {{
+                    reservation.participants|join(", ") }}{% endif %}
+                  </p>
+                  {% else %}
+                  <p>No reservations yet.</p>
+                  {% endfor %}
+                </details>
+                {% endfor %}
+              </div>
+              <div class="booking-actions">
+                {% if item.tour.has_reservations %}
+                <span class="booking-action modify-control locked-modify"
+                  >Modify tour</span
+                >
+                {% else %}
+                <a
+                  class="booking-action review modify-control"
+                  href="{{ url_for('edit_tour', tour_id=item.tour.id) }}"
+                  data-confirm="Are you sure you want to modify this tour?"
+                  >Modify tour</a
+                >
+                {% endif %}
+                <a
+                  class="booking-action"
+                  href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+                  >View route</a
+                >
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+    </div>
+  </article>
+
+  <article class="tour-section">
+    <header class="tour-section-head previous">
+      <h2>Previous Tours</h2>
+      <span>{{ guide_previous_tours|length }} completed</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in guide_previous_tours[:3] %}
+      <article
+        class="profile-tour-card past"
+        data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <span class="profile-pill past">{{ item.status }}</span>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+          </div>
+          <div class="reservation-summary">
+            {% for summary in item.reservation_summary[:2] %}
+            <details>
+              <summary>
+                {{ summary.date.strftime("%d.%m.%Y") }} / {{ summary.time }} /
+                {{ summary.language }} / {{ summary.expected }} expected
+              </summary>
+              {% for reservation in summary.reservations %}
+              <p>
+                {{ reservation.name }} ({{ reservation.people_count }}){% if
+                reservation.participants %}: {{ reservation.participants|join(",
+                ") }}{% endif %}
+              </p>
+              {% else %}
+              <p>No reservations.</p>
+              {% endfor %}
+            </details>
+            {% endfor %}
+          </div>
+          <div class="booking-actions">
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >Walk details</a
+            >
+          </div>
+        </div>
+      </article>
+      {% endfor %} {% if guide_previous_tours|length == 0 %}
+      <p class="empty-state">No previous tours yet.</p>
+      {% endif %} {% if guide_previous_tours|length > 3 %}
+      <details class="profile-more">
+        <summary>
+          ↓ {{ guide_previous_tours|length - 3 }} more previous tours
+        </summary>
+        <div class="profile-tour-list">
+          {% for item in guide_previous_tours[3:] %}
+          <article
+            class="profile-tour-card past"
+            data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+          >
+            <a
+              class="profile-tour-image"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+            >
+              <img
+                src="{{ url_for('static', filename=item.tour.card_image) }}"
+                alt="{{ item.tour.name }}"
+              />
+            </a>
+            <div class="profile-tour-body">
+              <span class="profile-pill past">{{ item.status }}</span>
+              <h3>{{ item.tour.name }}</h3>
+              <div class="profile-tour-meta">
+                <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+                <span>{{ item.time }}</span>
+                <span>{{ item.tour.category }}</span>
+              </div>
+              <div class="reservation-summary">
+                {% for summary in item.reservation_summary[:2] %}
+                <details>
+                  <summary>
+                    {{ summary.date.strftime("%d.%m.%Y") }} / {{ summary.time }}
+                    / {{ summary.language }} / {{ summary.expected }} expected
+                  </summary>
+                  {% for reservation in summary.reservations %}
+                  <p>
+                    {{ reservation.name }} ({{ reservation.people_count }}){% if
+                    reservation.participants %}: {{
+                    reservation.participants|join(", ") }}{% endif %}
+                  </p>
+                  {% else %}
+                  <p>No reservations.</p>
+                  {% endfor %}
+                </details>
+                {% endfor %}
+              </div>
+              <div class="booking-actions">
+                <a
+                  class="booking-action"
+                  href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+                  >Walk details</a
+                >
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+    </div>
+  </article>
+</section>
+
+<section class="tour-section guide-profile-reviews">
+  <header class="tour-section-head red-head">
+    <h2>Reviews</h2>
+    <span>{{ guide_reviews|length }} total</span>
+  </header>
+  <div class="profile-review-list">
+    {% for review in guide_reviews %}
+    <article class="profile-review-card">
+      <span class="review-score">{{ review.point }}</span>
+      <h3>{{ review.name }}</h3>
+      <p>{{ review.text }}</p>
+      <small>{{ review.tour_name }}</small>
+    </article>
+    {% else %}
+    <p class="empty-state">No reviews yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<section class="profile-tours">
+  <article class="tour-section">
+    <header class="tour-section-head">
+      <h2>My Bookings</h2>
+      <span>{{ upcoming_tours|length }} booked</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in upcoming_tours %}
+      <article
+        class="profile-tour-card"
+        data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <span class="profile-pill active">{{ item.status }}</span>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+            <span>{{ item.people_count }} people</span>
+          </div>
+          {% if item.participants %}
+          <p class="participant-list">
+            Guests: {{ item.participants|join(", ") }}
+          </p>
+          {% endif %}
+          <div class="booking-actions">
+            {% if item.can_cancel %}
+            <form
+              method="post"
+              action="{{ url_for('cancel_booking', tour_id=item.tour.id) }}"
+              data-confirm="Are you sure you want to cancel this booking?"
+            >
+              <button class="booking-action danger" type="submit">
+                Cancel booking
+              </button>
+            </form>
+            {% else %}
+            <span class="booking-action locked">Locked 24h</span>
+            {% endif %}
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >View route</a
+            >
+          </div>
+        </div>
+      </article>
+      {% else %}
+      <p class="empty-state">No upcoming tours yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="tour-section">
+    <header class="tour-section-head previous">
+      <h2>Previous Bookings</h2>
+      <span>{{ previous_tours|length }} walked</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in previous_tours %}
+      <article
+        class="profile-tour-card past"
+        data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <span class="profile-pill past">{{ item.status }}</span>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+            <span>{{ item.people_count }} people</span>
+          </div>
+          {% if item.participants %}
+          <p class="participant-list">
+            Guests: {{ item.participants|join(", ") }}
+          </p>
+          {% endif %}
+          <div class="booking-actions">
+            {% if item.reviewed %}
+            <span class="booking-action locked">Review submitted</span>
+            {% else %}
+            <a
+              class="booking-action review"
+              href="{{ url_for('add_review', tour_id=item.tour.id) }}"
+              >Add review</a
+            >
+            {% endif %}
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >Walk details</a
+            >
+          </div>
+        </div>
+      </article>
+      {% else %}
+      <p class="empty-state">No previous tours yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endif %} {% endblock %}

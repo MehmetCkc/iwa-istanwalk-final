@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Path Not Found — ISTANWALK</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/not_found.css') }}"
+    />
+  </head>
+  <body class="not-found-page">
+    {% include "_navbar.html" %}
+    <main class="not-found-content" aria-label="Page not found">
+      <h1>Looks like this path has not been explored</h1>
+      <div class="not-found-art">
+        {% if has_404_image %}
+        <img
+          src="{{ url_for('static', filename='images/404.jpg') }}"
+          alt="Unexplored path illustration"
+        />
+        {% endif %}
+      </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

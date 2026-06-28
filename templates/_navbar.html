@@ -1,0 +1,35 @@
+<header class="topbar">
+  <a class="brand" href="{{ url_for('home') }}" aria-label="ISTANWALK home">
+    <span class="brand-mark">IW</span>
+    <span class="brand-title">ISTAN<span>WALK</span></span>
+  </a>
+  <button
+    class="nav-toggle"
+    type="button"
+    data-nav-toggle
+    aria-label="Open navigation"
+  >
+    MENU
+  </button>
+  <nav class="topnav" data-nav>
+    <a class="topnav-item" href="{{ url_for('home') }}">Tours</a>
+    {% if current_user.is_authenticated %} {% if current_user.isAdmin() %}
+    <a class="topnav-item" href="{{ url_for('admin_dashboard') }}">Admin</a>
+    {% elif current_user.isGuide() %}
+    <a class="topnav-item" href="{{ url_for('guide_tours') }}">My Tours</a>
+    {% else %}
+    <a class="topnav-item" href="{{ url_for('my_bookings') }}">My Bookings</a>
+    {% endif %}
+    <a class="topnav-item who" href="{{ url_for('profile') }}"
+      >{{ current_user.name }}</a
+    >
+    <a class="topnav-item" href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+    <a class="topnav-item" href="{{ url_for('signup_guide') }}"
+      >Become A Guide</a
+    >
+    <a class="topnav-item who" href="{{ url_for('login') }}">Login</a>
+    <a class="topnav-item" href="{{ url_for('signup_user') }}">Join</a>
+    {% endif %}
+  </nav>
+</header>

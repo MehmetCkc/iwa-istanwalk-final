@@ -1,0 +1,86 @@
+{% extends "base.html" %} {% block title %}{{ guide.name }} {{ guide.surname }}
+— ISTANWALK{% endblock %} {% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{{ url_for('home') }}">Tours</a>
+  <span>/</span>
+  <span>{{ guide.name }} {{ guide.surname }}</span>
+</nav>
+
+<section class="guide-hero">
+  <div class="guide-photo">
+    <img
+      src="{{ url_for('static', filename=guide.photo) }}"
+      alt="{{ guide.name }} {{ guide.surname }}"
+    />
+  </div>
+  <div class="guide-intro">
+    <p class="mono kicker">Guide profile</p>
+    <h1>{{ guide.name }} {{ guide.surname }}</h1>
+    <p>{{ guide.info }}</p>
+  </div>
+  <div class="guide-score">
+    <span>Review point</span>
+    <strong>{{ guide.review_point }}</strong>
+  </div>
+</section>
+
+<section class="guide-layout">
+  <article class="panel guide-info-panel">
+    <header class="panel-head">Info</header>
+    <div class="panel-body">
+      <div class="spec-list">
+        <div><b>Name</b><span>{{ guide.name }}</span></div>
+        <div><b>Surname</b><span>{{ guide.surname }}</span></div>
+        <div>
+          <b>Spoken languages</b><span>{{ guide.languages|join(" / ") }}</span>
+        </div>
+        <div><b>Review point</b><span>{{ guide.review_point }}</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="panel guide-info-panel">
+    <header class="panel-head navy">Guiding Now</header>
+    <div class="guide-tour-list">
+      {% for tour in guide_tours %}
+      <a
+        class="guide-tour-row"
+        href="{{ url_for('tour_details', tour_id=tour.id) }}"
+      >
+        <img
+          src="{{ url_for('static', filename=tour.card_image) }}"
+          alt="{{ tour.name }}"
+        />
+        <span>
+          <strong>{{ tour.name }}</strong>
+          <em>{{ tour.category }} / {{ tour.duration_minutes or 120 }} min</em>
+        </span>
+      </a>
+      {% else %}
+      <p class="guide-empty">No active tours.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="panel guide-reviews" data-review-section>
+  <header class="panel-head red">Reviews</header>
+  <div class="review-grid">
+    {% for review in guide.reviews %}
+    <article
+      class="review-card{% if loop.index > 3 %} hidden-review{% endif %}"
+      data-review-card
+    >
+      <span class="review-point">{{ review.point }}</span>
+      <h3>{{ review.name }}</h3>
+      <p>{{ review.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+  {% if guide.reviews|length > 3 %}
+  <div class="review-actions">
+    <button class="btn turq" type="button" data-show-reviews>Show all</button>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

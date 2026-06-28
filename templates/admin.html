@@ -1,0 +1,280 @@
+{% extends "base.html" %} {% block title %}Admin Dashboard — ISTANWALK{%
+endblock %} {% block content %}
+<section class="admin-page">
+  <header class="admin-hero">
+    <div>
+      <p class="kicker">Operations / live overview</p>
+      <h1>Admin dashboard</h1>
+    </div>
+    <span class="admin-badge">Restricted access</span>
+  </header>
+
+  <div class="admin-stats">
+    <a href="#tours"><strong>{{ stats.tours }}</strong><span>Tours</span></a>
+    <a href="#guides"><strong>{{ stats.guides }}</strong><span>Guides</span></a>
+    <a href="#users"><strong>{{ stats.users }}</strong><span>Users</span></a>
+    <a href="#reservations"
+      ><strong>{{ stats.reservations }}</strong><span>Reservations</span></a
+    >
+    <a href="#reports"
+      ><strong>{{ stats.reports }}</strong><span>Reports</span></a
+    >
+  </div>
+
+  <section class="admin-section" id="tours">
+    <header>
+      <h2>Tours</h2>
+      <span>{{ tours|length }} total</span>
+    </header>
+    <div class="admin-search">
+      <label for="search-tours">Search tours</label
+      ><input
+        id="search-tours"
+        type="search"
+        placeholder="Name, category, meeting point…"
+        autocomplete="off"
+        data-admin-search="tours"
+      /><span data-admin-result="tours"></span>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tour</th>
+            <th>Category</th>
+            <th>Meeting point</th>
+            <th>Guides</th>
+            <th>Bookings</th>
+            <th>People</th>
+          </tr>
+        </thead>
+        <tbody data-admin-list="tours">
+          {% for tour in tours %}
+          <tr data-admin-item>
+            <td>
+              <a href="{{ url_for('tour_details', tour_id=tour.id) }}"
+                ><strong>{{ tour.name }}</strong></a
+              >
+            </td>
+            <td>{{ tour.type or '—' }}</td>
+            <td>{{ tour.meeting_point }}</td>
+            <td>{{ tour.guide_count }}</td>
+            <td>{{ tour.booking_count }}</td>
+            <td>{{ tour.people_booked }} / {{ tour.max_participants }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="admin-no-results" data-admin-empty="tours" hidden>
+      No matching tours found.
+    </p>
+    <nav
+      class="admin-pagination"
+      data-admin-pagination="tours"
+      aria-label="Tours pages"
+    >
+      <button type="button" data-admin-prev aria-label="Previous tours page">
+        ←</button
+      ><span data-admin-page></span
+      ><button type="button" data-admin-next aria-label="Next tours page">
+        →
+      </button>
+    </nav>
+  </section>
+
+  <section class="admin-section" id="reservations">
+    <header>
+      <h2>Reservations by language</h2>
+      <span>{{ stats.reservations }} total</span>
+    </header>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Language</th>
+            <th>Reservations</th>
+            <th>People booked</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in reservations_by_language %}
+          <tr>
+            <td><strong>{{ row.language }}</strong></td>
+            <td>{{ row.reservation_count }}</td>
+            <td>{{ row.people_count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section" id="guides">
+    <header>
+      <h2>Guides</h2>
+      <span>{{ guides|length }} active accounts</span>
+    </header>
+    <div class="admin-search">
+      <label for="search-guides">Search guides</label
+      ><input
+        id="search-guides"
+        type="search"
+        placeholder="Name or email…"
+        autocomplete="off"
+        data-admin-search="guides"
+      /><span data-admin-result="guides"></span>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Guide</th>
+            <th>Email</th>
+            <th>Tours</th>
+            <th>Reports</th>
+            <th>Attendance</th>
+          </tr>
+        </thead>
+        <tbody data-admin-list="guides">
+          {% for guide in guides %}
+          <tr data-admin-item>
+            <td>
+              <a href="{{ url_for('guide_info', guide_id=guide.id) }}"
+                ><strong>{{ guide.name }} {{ guide.surname }}</strong></a
+              >
+            </td>
+            <td>{{ guide.email }}</td>
+            <td>{{ guide.tour_count }}</td>
+            <td>{{ guide.report_count }}</td>
+            <td>{{ guide.total_attendance }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="admin-no-results" data-admin-empty="guides" hidden>
+      No matching guides found.
+    </p>
+    <nav
+      class="admin-pagination"
+      data-admin-pagination="guides"
+      aria-label="Guides pages"
+    >
+      <button type="button" data-admin-prev aria-label="Previous guides page">
+        ←</button
+      ><span data-admin-page></span
+      ><button type="button" data-admin-next aria-label="Next guides page">
+        →
+      </button>
+    </nav>
+  </section>
+
+  <section class="admin-section" id="users">
+    <header>
+      <h2>Users</h2>
+      <span>{{ members|length }} participants</span>
+    </header>
+    <div class="admin-search">
+      <label for="search-users">Search users</label
+      ><input
+        id="search-users"
+        type="search"
+        placeholder="Name, email, location…"
+        autocomplete="off"
+        data-admin-search="users"
+      /><span data-admin-result="users"></span>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody data-admin-list="users">
+          {% for user in members %}
+          <tr data-admin-item>
+            <td><strong>{{ user.name }} {{ user.surname }}</strong></td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.location or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="admin-no-results" data-admin-empty="users" hidden>
+      No matching users found.
+    </p>
+    <nav
+      class="admin-pagination"
+      data-admin-pagination="users"
+      aria-label="Users pages"
+    >
+      <button type="button" data-admin-prev aria-label="Previous users page">
+        ←</button
+      ><span data-admin-page></span
+      ><button type="button" data-admin-next aria-label="Next users page">
+        →
+      </button>
+    </nav>
+  </section>
+
+  <section class="admin-section" id="reports">
+    <header>
+      <h2>Guide reports</h2>
+      <span>{{ reports|length }} submitted</span>
+    </header>
+    <div class="admin-search">
+      <label for="search-reports">Search reports</label
+      ><input
+        id="search-reports"
+        type="search"
+        placeholder="Tour, guide, email, date…"
+        autocomplete="off"
+        data-admin-search="reports"
+      /><span data-admin-result="reports"></span>
+    </div>
+    <div class="report-grid" data-admin-list="reports">
+      {% for report in reports %}
+      <article class="report-card" data-admin-item>
+        <div>
+          <span class="tag">{{ report.date }} / {{ report.time }}</span>
+          <h3>{{ report.tour_name }}</h3>
+          <p>{{ report.guide_name }} · {{ report.guide_email }}</p>
+        </div>
+        <strong class="attendance"
+          >{{ report.attendance }}<small> attended</small></strong
+        >{% if report.proof_image %}<a
+          class="proof-link"
+          href="{{ report.proof_image }}"
+          target="_blank"
+          rel="noopener"
+          ><img
+            src="{{ report.proof_image }}"
+            alt="Proof submitted by {{ report.guide_name }}"
+          /><span>View proof</span></a
+        >{% else %}<span class="no-proof">No proof image</span>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+    <p class="admin-no-results" data-admin-empty="reports" hidden>
+      No matching reports found.
+    </p>
+    <nav
+      class="admin-pagination"
+      data-admin-pagination="reports"
+      aria-label="Report pages"
+    >
+      <button type="button" data-admin-prev aria-label="Previous reports page">
+        ←</button
+      ><span data-admin-page></span
+      ><button type="button" data-admin-next aria-label="Next reports page">
+        →
+      </button>
+    </nav>
+  </section>
+</section>
+{% endblock %}

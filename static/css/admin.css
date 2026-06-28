@@ -1,0 +1,300 @@
+.admin-page {
+  padding: 22px;
+}
+.admin-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  border: var(--bw) solid var(--ink);
+  background: var(--paper2);
+  padding: 24px;
+}
+.admin-hero h1 {
+  font-size: clamp(36px, 6vw, 72px);
+}
+.admin-badge {
+  border: 2px solid var(--ink);
+  background: var(--red);
+  color: #fff;
+  font:
+    700 11px "Courier New",
+    monospace;
+  letter-spacing: 0.06em;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: var(--bw) solid var(--ink);
+  border-top: 0;
+}
+.admin-stats a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  border-right: 2px solid var(--ink);
+  background: var(--turq);
+  padding: 18px 16px;
+}
+.admin-stats a:last-child {
+  border-right: 0;
+  background: var(--red);
+  color: #fff;
+}
+.admin-stats strong {
+  font:
+    900 38px "Arial Black",
+    sans-serif;
+}
+.admin-stats span,
+.admin-section header span {
+  font:
+    700 11px "Courier New",
+    monospace;
+  text-transform: uppercase;
+}
+.admin-section {
+  margin-top: 22px;
+  border: var(--bw) solid var(--ink);
+  background: var(--paper2);
+  scroll-margin-top: 20px;
+}
+.admin-section > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-bottom: var(--bw) solid var(--ink);
+  background: var(--navy);
+  color: #fff;
+  padding: 14px 16px;
+}
+.admin-section:nth-of-type(even) > header {
+  background: var(--turq);
+  color: var(--ink);
+}
+.admin-section h2 {
+  font-size: 24px;
+}
+.admin-search {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 420px) 1fr;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 2px solid var(--ink);
+  background: #e6e1d5;
+  padding: 12px 14px;
+}
+.admin-search label,
+.admin-search span {
+  font:
+    700 11px "Courier New",
+    monospace;
+  text-transform: uppercase;
+}
+.admin-search input {
+  width: 100%;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  padding: 9px 11px;
+  outline: none;
+}
+.admin-search input:focus {
+  box-shadow: 4px 4px 0 var(--turq);
+}
+.admin-search span {
+  color: var(--muted);
+  text-align: right;
+}
+.admin-no-results {
+  border-top: 1px solid #aaa;
+  color: var(--muted);
+  font:
+    700 11px "Courier New",
+    monospace;
+  padding: 18px 14px;
+  text-transform: uppercase;
+}
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 2px solid var(--ink);
+  background: #e6e1d5;
+  padding: 10px 14px;
+}
+.admin-pagination[hidden] {
+  display: none;
+}
+.admin-pagination span {
+  min-width: 100px;
+  font:
+    700 11px "Courier New",
+    monospace;
+  text-align: center;
+  text-transform: uppercase;
+}
+.admin-pagination button {
+  display: grid;
+  width: 38px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--turq);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 900;
+}
+.admin-pagination button:hover:not(:disabled) {
+  background: var(--red);
+  color: #fff;
+}
+.admin-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+.admin-table-wrap {
+  overflow-x: auto;
+}
+.admin-section table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-section th {
+  background: #e6e1d5;
+  font:
+    700 11px "Courier New",
+    monospace;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.admin-section th,
+.admin-section td {
+  border-bottom: 1px solid #aaa;
+  padding: 12px 14px;
+}
+.admin-section tbody tr:hover {
+  background: #fff;
+}
+.admin-section td a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
+}
+.report-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 14px;
+}
+.report-card h3 {
+  margin-top: 8px;
+  font-size: 20px;
+}
+.report-card p {
+  color: var(--muted);
+  font-size: 12px;
+}
+.attendance {
+  align-self: start;
+  color: var(--red);
+  font:
+    900 30px "Arial Black",
+    sans-serif;
+}
+.attendance small {
+  display: block;
+  color: var(--ink);
+  font:
+    700 9px "Courier New",
+    monospace;
+  text-transform: uppercase;
+}
+.proof-link {
+  grid-column: 1/-1;
+  position: relative;
+  border: 2px solid var(--ink);
+  height: 150px;
+  overflow: hidden;
+}
+.proof-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.proof-link span {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  border: 2px solid var(--ink);
+  background: var(--turq);
+  font:
+    700 10px "Courier New",
+    monospace;
+  padding: 6px;
+  text-transform: uppercase;
+}
+.no-proof {
+  grid-column: 1/-1;
+  color: var(--muted);
+  font:
+    700 11px "Courier New",
+    monospace;
+  text-transform: uppercase;
+}
+@media (max-width: 800px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .admin-stats a:nth-child(2) {
+    border-right: 0;
+  }
+  .admin-stats a {
+    border-bottom: 2px solid var(--ink);
+  }
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .admin-page {
+    padding: 12px;
+  }
+  .admin-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+  .admin-stats a {
+    border-right: 0;
+  }
+  .report-grid {
+    padding: 10px;
+  }
+  .admin-search {
+    grid-template-columns: 1fr;
+  }
+  .admin-search span {
+    text-align: left;
+  }
+}

@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block title %}Join — ISTANWALK{% endblock %} {%
+block content %}
+<section class="auth-shell">
+  <div class="auth-art red">
+    <img
+      src="{{ url_for('static', filename='images/karakalem.jpg') }}"
+      alt="Istanbul illustration"
+    />
+  </div>
+  <form class="panel auth-panel" method="post">
+    <header class="panel-head red">Participant Signup</header>
+    <div class="panel-body grid-form">
+      <div>
+        <label for="first_name">First name</label>
+        <input id="first_name" name="first_name" type="text" required />
+      </div>
+      <div>
+        <label for="last_name">Last name</label>
+        <input id="last_name" name="last_name" type="text" required />
+      </div>
+      <div class="wide">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+      </div>
+      <div class="wide">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+      </div>
+      <button class="btn red full wide" type="submit">Create account</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

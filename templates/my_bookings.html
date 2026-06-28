@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block title %}My Bookings — ISTANWALK{% endblock %}
+{% block content %}
+<section class="sectionhead">
+  <h2>My Bookings</h2>
+  <span class="tag">Upcoming reservations</span>
+</section>
+
+<section class="profile-tours bookings-page">
+  <article class="tour-section">
+    <header class="tour-section-head">
+      <h2>My Bookings</h2>
+      <span>{{ upcoming_tours|length }} booked</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in upcoming_tours %}
+      <article
+        class="profile-tour-card"
+        data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <span class="profile-pill active">{{ item.status }}</span>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+            <span>{{ item.people_count }} people</span>
+          </div>
+          {% if item.participants %}
+          <p class="participant-list">
+            Guests: {{ item.participants|join(", ") }}
+          </p>
+          {% endif %}
+          <div class="booking-actions">
+            {% if item.can_cancel %}
+            <form
+              method="post"
+              action="{{ url_for('cancel_booking', tour_id=item.tour.id) }}"
+              data-confirm="Are you sure you want to cancel this booking?"
+            >
+              <button class="booking-action danger" type="submit">
+                Cancel booking
+              </button>
+            </form>
+            {% else %}
+            <span class="booking-action locked">Locked 24h</span>
+            {% endif %}
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >View route</a
+            >
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="tour-section">
+    <header class="tour-section-head previous">
+      <h2>Previous Bookings</h2>
+      <span>{{ previous_tours|length }} walked</span>
+    </header>
+    <div class="profile-tour-list">
+      {% for item in previous_tours %}
+      <article
+        class="profile-tour-card past"
+        data-card-link="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+      >
+        <a
+          class="profile-tour-image"
+          href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+        >
+          <img
+            src="{{ url_for('static', filename=item.tour.card_image) }}"
+            alt="{{ item.tour.name }}"
+          />
+        </a>
+        <div class="profile-tour-body">
+          <span class="profile-pill past">{{ item.status }}</span>
+          <h3>{{ item.tour.name }}</h3>
+          <div class="profile-tour-meta">
+            <span>{{ item.date.strftime("%d.%m.%Y") }}</span>
+            <span>{{ item.time }}</span>
+            <span>{{ item.tour.category }}</span>
+            <span>{{ item.people_count }} people</span>
+          </div>
+          {% if item.participants %}
+          <p class="participant-list">
+            Guests: {{ item.participants|join(", ") }}
+          </p>
+          {% endif %}
+          <div class="booking-actions">
+            {% if item.reviewed %}
+            <span class="booking-action locked">Review submitted</span>
+            {% else %}
+            <a
+              class="booking-action review"
+              href="{{ url_for('add_review', tour_id=item.tour.id) }}"
+              >Add review</a
+            >
+            {% endif %}
+            <a
+              class="booking-action"
+              href="{{ url_for('tour_details', tour_id=item.tour.id) }}"
+              >Walk details</a
+            >
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}
