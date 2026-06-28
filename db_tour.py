@@ -1,4 +1,5 @@
 import sqlite3
+from collections import defaultdict
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from uuid import uuid4
@@ -490,6 +491,129 @@ def get_dataset_tours():
         rows = conn.execute("SELECT * FROM Tours ORDER BY id").fetchall()
         tours = [row_to_tour(conn, row) for row in rows]
         return [tour for tour in tours if has_upcoming_departures(tour)]
+
+
+def get_tour_departures_from_rows(departures, languages):
+    if departures:
+        return departures
+
+    today = date.today()
+    fallback_languages = languages or ["English"]
+    fallback_times = ["10:00 AM", "02:00 PM", "04:30 PM"]
+    return [
+        {
+            "date": (today + timedelta(days=offset)).isoformat(),
+            "time": fallback_times[index % len(fallback_times)],
+            "language": language,
+        }
+        for index, (offset, language) in enumerate(
+            zip((0, 2, 4, 6), fallback_languages * 4)
+        )
+    ][:4]
+
+
+def get_homepage_tours():
+    """Return only the fields needed by the index cards and filters."""
+    ensure_booking_schema()
+    now = datetime.now()
+    with db_connection() as conn:
+        tour_rows = conn.execute("SELECT * FROM Tours ORDER BY id").fetchall()
+        language_rows = conn.execute(
+            """
+            SELECT TourLanguages.tour_id, Languages.name
+            FROM TourLanguages
+            JOIN Languages ON Languages.id = TourLanguages.language_id
+            ORDER BY Languages.id
+            """
+        ).fetchall()
+        guide_rows = conn.execute(
+            """
+            SELECT id_tour, COUNT(*) AS guide_count
+            FROM TourGuides
+            GROUP BY id_tour
+            """
+        ).fetchall()
+        image_rows = conn.execute(
+            """
+            SELECT tour_id, image
+            FROM TourImages
+            ORDER BY tour_id, image_order, id
+            """
+        ).fetchall()
+        departure_rows = conn.execute(
+            """
+            SELECT tour_id, date, time, language
+            FROM TourDepartures
+            ORDER BY tour_id, date, time
+            """
+        ).fetchall()
+        booking_rows = conn.execute(
+            """
+            SELECT tour_id, COALESCE(SUM(people_count), 0) AS booked
+            FROM Reservations
+            GROUP BY tour_id
+            """
+        ).fetchall()
+
+    languages_by_tour = defaultdict(list)
+    for row in language_rows:
+        languages_by_tour[row["tour_id"]].append(row["name"])
+
+    guide_count_by_tour = {row["id_tour"]: row["guide_count"] for row in guide_rows}
+    booked_by_tour = {row["tour_id"]: row["booked"] for row in booking_rows}
+
+    images_by_tour = defaultdict(list)
+    for row in image_rows:
+        if row["image"]:
+            images_by_tour[row["tour_id"]].append(row["image"])
+
+    departures_by_tour = defaultdict(list)
+    for row in departure_rows:
+        time_label, legacy_language = split_time_language(row["time"])
+        departures_by_tour[row["tour_id"]].append(
+            {
+                "date": row["date"],
+                "time": time_label,
+                "language": canonical_language_name(row["language"] or legacy_language),
+            }
+        )
+
+    tours = []
+    for row in tour_rows:
+        tour_id = row["id"]
+        languages = languages_by_tour[tour_id]
+        departures = get_tour_departures_from_rows(departures_by_tour[tour_id], languages)
+        upcoming_departures = [
+            departure
+            for departure in departures
+            if departure_datetime(departure["date"], departure["time"]) >= now
+        ]
+        if not upcoming_departures:
+            continue
+
+        next_departure = min(
+            upcoming_departures,
+            key=lambda departure: departure_datetime(departure["date"], departure["time"]),
+        )
+        promo_images = images_by_tour[tour_id] + FALLBACK_IMAGES
+        guide_count = guide_count_by_tour.get(tour_id, 0)
+        tours.append(
+            {
+                "id": tour_id,
+                "name": row["name"],
+                "category": row["type"],
+                "description": row["description"],
+                "max_participants": row["max_participants"],
+                "duration_minutes": row["duration_minutes"] if "duration_minutes" in row.keys() else 120,
+                "booked_total": booked_by_tour.get(tour_id, 0),
+                "card_image": promo_images[0],
+                "languages": languages,
+                "guides": [None] * guide_count,
+                "next_date_label": datetime.fromisoformat(next_departure["date"]).strftime("%d %b"),
+                "departures": departures,
+            }
+        )
+    return tours
 
 
 def get_dataset_tour(tour_id):
