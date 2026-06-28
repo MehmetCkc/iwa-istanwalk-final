@@ -16,7 +16,7 @@ from db_tour import (AVAILABLE_LANGUAGES, add_reservation,
                      departures_have_overlap, empty_tour_form,
                      first_available_slot, gallery_images_for,
                      get_dataset_guide_tours, get_dataset_tour,
-                     get_dataset_tours, guide_has_tour_overlap, guide_info_for,
+                     get_homepage_tours, guide_has_tour_overlap, guide_info_for,
                      guide_owns_tour, guide_profile_sections,
                      guide_review_sections, guide_spoken_languages,
                      guide_tours_for, pending_tour_completions_for_guide,
@@ -89,7 +89,7 @@ def booking_action_for_tour(tour_id):
 def home():
     return render_template(
         "index.html",
-        tours=get_dataset_tours(),
+        tours=get_homepage_tours(),
         categories=tour_categories(),
         today=date.today(),
     )
