@@ -11,7 +11,7 @@ flask run
 
 Open `http://127.0.0.1:5050/`.
 
-PythonAnywhere URL: 
+PythonAnywhere URL: https://mehmetckc.pythonanywhere.com/
 
 ## Sample Accounts
 
