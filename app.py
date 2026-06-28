@@ -57,17 +57,17 @@ def template_helpers():
 def current_guide_tours():
     if not current_user.is_authenticated or not current_user.isGuide():
         return []
-    return get_dataset_guide_tours(current_user.id)
+    return get_dataset_guide_tours(current_user.id, include_details=False)
 
 
-def booking_action_for_tour(tour_id):
+def booking_action_for_tour(tour_id, tour=None):
     # The same detail page exposes a different primary action for owners,
     # participants, and visitors.
     if current_user.is_authenticated and current_user.isAdmin():
         return {"type": "admin_view"}
 
     if current_user.is_authenticated and current_user.isGuide():
-        tour = get_dataset_tour(tour_id)
+        tour = tour or get_dataset_tour(tour_id)
         if tour and guide_owns_tour(tour, current_user.id):
             if tour.get("has_reservations"):
                 return {"type": "locked"}
@@ -77,8 +77,7 @@ def booking_action_for_tour(tour_id):
     if not current_user.is_authenticated or not current_user.isCustomer():
         return {"type": "reserve"}
 
-    _, previous_tours = profile_tour_sections(current_user.id)
-    if any(item["tour"]["id"] == tour_id for item in previous_tours):
+    if user_has_completed_booking(current_user.id, tour_id):
         if user_has_reviewed_tour(current_user.id, tour_id):
             return {"type": "reviewed"}
         return {"type": "review"}
@@ -231,10 +230,11 @@ def add_tour():
 def guide_tours():
     if not current_user.isGuide():
         abort(403)
+    tours = current_guide_tours()
     return render_template(
         "guide_tours.html",
-        tours=current_guide_tours(),
-        pending_completions=pending_tour_completions_for_guide(current_user.id),
+        tours=tours,
+        pending_completions=pending_tour_completions_for_guide(current_user.id, tours),
     )
 
 
@@ -477,7 +477,7 @@ def tour_details(tour_id):
         tour=tour,
         gallery_images=gallery_images_for(tour),
         calendar_days=tour_calendar_days(tour),
-        booking_action=booking_action_for_tour(tour_id),
+        booking_action=booking_action_for_tour(tour_id, tour),
         booking_error=session.pop("booking_error", None),
         booking_slots=booking_slot_payload(tour),
         default_slot=default_slot,
@@ -608,4 +608,4 @@ def profile():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)

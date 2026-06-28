@@ -426,10 +426,10 @@ def get_tour_departures(conn, tour_id, languages):
     ][:4]
 
 
-def row_to_tour(conn, row):
+def row_to_tour(conn, row, include_details=True, reservation_stats=None):
     languages = get_tour_languages(conn, row["id"])
     guides = get_tour_guides(conn, row["id"])
-    stops = get_tour_stops(conn, row["id"])
+    stops = get_tour_stops(conn, row["id"]) if include_details else []
     departures = get_tour_departures(conn, row["id"], languages)
     promo_images = get_tour_images(conn, row["id"])
     times = []
@@ -446,6 +446,9 @@ def row_to_tour(conn, row):
         key=lambda departure: departure_datetime(departure["date"], departure["time"]),
         default=None,
     )
+    stats = reservation_stats.get(row["id"]) if reservation_stats else None
+    booked_total = stats["booked_total"] if stats else booked_total_for_tour(row["id"])
+    has_reservations = stats["has_reservations"] if stats else tour_has_reservations(row["id"])
     tour = {
         "id": row["id"],
         "name": row["name"],
@@ -456,8 +459,8 @@ def row_to_tour(conn, row):
         "duration_minutes": (
             row["duration_minutes"] if "duration_minutes" in row.keys() else 120
         ),
-        "has_reservations": tour_has_reservations(row["id"]),
-        "booked_total": booked_total_for_tour(row["id"]),
+        "has_reservations": has_reservations,
+        "booked_total": booked_total,
         "hero_image": promo_images[0],
         "card_image": promo_images[0],
         "gallery_images": promo_images,
@@ -470,10 +473,14 @@ def row_to_tour(conn, row):
             else "No dates"
         ),
         "departures": departures,
-        "reservation_people": reservation_people_for_tour(row["id"]),
+        "reservation_people": (
+            reservation_people_for_tour(row["id"]) if include_details else []
+        ),
         "stops": stops,
     }
-    tour["reservation_summary"] = reservation_summary_for_tour(tour)
+    tour["reservation_summary"] = (
+        reservation_summary_for_tour(tour) if include_details else []
+    )
     return tour
 
 
@@ -616,17 +623,43 @@ def get_homepage_tours():
     return tours
 
 
-def get_dataset_tour(tour_id):
-    ensure_tour_schema()
+def reservation_stats_for_tours(conn, tour_ids):
+    if not tour_ids:
+        return {}
+    placeholders = ",".join("?" for _ in tour_ids)
+    rows = conn.execute(
+        f"""
+        SELECT tour_id, COALESCE(SUM(people_count), 0) AS booked_total, COUNT(*) AS reservation_count
+        FROM Reservations
+        WHERE tour_id IN ({placeholders})
+        GROUP BY tour_id
+        """,
+        tour_ids,
+    ).fetchall()
+    stats = {
+        row["tour_id"]: {
+            "booked_total": row["booked_total"],
+            "has_reservations": row["reservation_count"] > 0,
+        }
+        for row in rows
+    }
+    for tour_id in tour_ids:
+        stats.setdefault(tour_id, {"booked_total": 0, "has_reservations": False})
+    return stats
+
+
+def get_dataset_tour(tour_id, include_details=True):
+    ensure_booking_schema()
     with db_connection() as conn:
         row = conn.execute("SELECT * FROM Tours WHERE id = ?", (tour_id,)).fetchone()
         if row is None:
             return None
-        return row_to_tour(conn, row)
+        stats = reservation_stats_for_tours(conn, [tour_id])
+        return row_to_tour(conn, row, include_details, stats)
 
 
-def get_dataset_guide_tours(guide_id):
-    ensure_tour_schema()
+def get_dataset_guide_tours(guide_id, include_details=True):
+    ensure_booking_schema()
     with db_connection() as conn:
         rows = conn.execute(
             """
@@ -638,7 +671,8 @@ def get_dataset_guide_tours(guide_id):
             """,
             (guide_id,),
         ).fetchall()
-        return [row_to_tour(conn, row) for row in rows]
+        stats = reservation_stats_for_tours(conn, [row["id"] for row in rows])
+        return [row_to_tour(conn, row, include_details, stats) for row in rows]
 
 
 def guide_owns_tour(tour, guide_id):
@@ -693,7 +727,7 @@ def guide_tours_for(guide_id):
     if str(guide_id).isdigit():
         return [
             tour
-            for tour in get_dataset_guide_tours(int(guide_id))
+            for tour in get_dataset_guide_tours(int(guide_id), include_details=False)
             if has_upcoming_departures(tour)
         ]
     return []
@@ -711,6 +745,21 @@ def booked_people_count(tour_id, date_value, time_label):
             (tour_id, date_value, time_label),
         ).fetchone()
     return row["booked"] if row else 0
+
+
+def booked_counts_for_tour(tour_id):
+    ensure_booking_schema()
+    with db_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT date, time, COALESCE(SUM(people_count), 0) AS booked
+            FROM Reservations
+            WHERE tour_id = ?
+            GROUP BY date, time
+            """,
+            (tour_id,),
+        ).fetchall()
+    return {(row["date"], row["time"]): row["booked"] for row in rows}
 
 
 def get_tour_images(conn, tour_id):
@@ -901,18 +950,26 @@ def departures_have_overlap(departures, duration_minutes=120):
 
 
 def first_available_slot(tour):
+    booked_by_slot = booked_counts_for_tour(tour["id"])
     for departure in tour.get("departures", []):
         if departure_datetime(departure["date"], departure["time"]) < datetime.now():
             continue
-        if remaining_capacity(tour, departure["date"], departure["time"]) > 0:
+        booked = booked_by_slot.get((departure["date"], departure["time"]), 0)
+        if int(tour.get("max_participants") or 0) - booked > 0:
             return departure
     return None
 
 
 def booking_slot_payload(tour):
+    booked_by_slot = booked_counts_for_tour(tour["id"])
     return {
         f"{departure['date']}|{departure['time']}": min(
-            4, remaining_capacity(tour, departure["date"], departure["time"])
+            4,
+            max(
+                0,
+                int(tour.get("max_participants") or 0)
+                - booked_by_slot.get((departure["date"], departure["time"]), 0),
+            ),
         )
         for departure in tour.get("departures", [])
     }
@@ -935,7 +992,7 @@ def profile_tour_sections(user_id):
         ).fetchall()
 
     for row in rows:
-        tour = get_dataset_tour(row["tour_id"])
+        tour = get_dataset_tour(row["tour_id"], include_details=False)
         if tour is None:
             continue
         starts_at = departure_datetime(row["date"], row["time"])
@@ -959,8 +1016,19 @@ def profile_tour_sections(user_id):
 
 
 def user_has_upcoming_booking_for_tour(user_id, tour_id):
-    upcoming_tours, _ = profile_tour_sections(user_id)
-    return any(item["tour"]["id"] == tour_id for item in upcoming_tours)
+    ensure_booking_schema()
+    with db_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT date, time
+            FROM Reservations
+            WHERE user_id = ? AND tour_id = ?
+            """,
+            (user_id, tour_id),
+        ).fetchall()
+    return any(
+        departure_datetime(row["date"], row["time"]) >= datetime.now() for row in rows
+    )
 
 
 def cancel_upcoming_booking(user_id, tour_id):
@@ -1385,11 +1453,11 @@ def save_tour_image(uploaded_file, prefix):
     return f"images/tour_uploads/{filename}"
 
 
-def pending_tour_completions_for_guide(guide_id):
+def pending_tour_completions_for_guide(guide_id, tours=None):
     ensure_tour_schema()
     now = datetime.now()
     pending = []
-    for tour in get_dataset_guide_tours(guide_id):
+    for tour in tours or get_dataset_guide_tours(guide_id, include_details=False):
         for departure in tour.get("departures", []):
             # Reports are per departure, not per tour, so past dates still appear when the tour continues later.
             if (
